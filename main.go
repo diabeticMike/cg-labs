@@ -16,6 +16,7 @@ const (
 func main() {
 	// draw()
 	drawDiagonal()
+	drawAbsOrd()
 }
 
 var w, h int = 2543, 1344
@@ -26,7 +27,7 @@ func draw() {
 	dc.SetRGB(0, 0, 0)
 	dc.Fill()
 
-	drawRandom50(dc)
+	drawDiagonal()
 	dc.SavePNG(filename)
 }
 
@@ -48,7 +49,37 @@ func drawDiagonal() {
 		drawPrism(dc, x, y, s, visible, invisible)
 		x += float64(w / 10)
 		y += float64(h / 10)
-		dc.SavePNG(fmt.Sprintf("image%v.png", i))
+		dc.SavePNG(fmt.Sprintf("5image%v.png", i))
+	}
+}
+
+func drawAbsOrd() {
+	dc := gg.NewContext(w+100, h+100)
+	rand.Seed(time.Now().UnixNano())
+	visible := Color{float64(rand.Intn(255)),
+		float64(rand.Intn(255)),
+		float64(rand.Intn(255))}
+	invisible := Color{float64(rand.Intn(255)),
+		float64(rand.Intn(255)),
+		float64(rand.Intn(255))}
+	s := float64(rand.Intn(4))
+	var x float64 = float64(w / 10)
+	for i := 0; i < 9; i++ {
+		dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
+		dc.SetRGB(0, 0, 0)
+		dc.Fill()
+		drawPrism(dc, x, 500, s, visible, invisible)
+		x += float64(w / 10)
+		dc.SavePNG(fmt.Sprintf("4image%v.png", i))
+	}
+	var y float64 = float64(h / 10)
+	for i := 9; i < 19; i++ {
+		dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
+		dc.SetRGB(0, 0, 0)
+		dc.Fill()
+		drawPrism(dc, x, y, s, visible, invisible)
+		y += float64(h / 10)
+		dc.SavePNG(fmt.Sprintf("4image%v.png", i))
 	}
 }
 
