@@ -2,8 +2,15 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"image/gif"
+	"image/png"
+	"math"
 	"math/rand"
+	"os"
 	"time"
+
+	"github.com/andybons/gogif"
 
 	"github.com/fogleman/gg"
 )
@@ -13,10 +20,76 @@ const (
 	filename = "image.png"
 )
 
+var files []string
+
 func main() {
 	// draw()
-	drawDiagonal()
-	drawAbsOrd()
+	//drawDiagonal()
+	//files = make([]string, 0)
+	//drawAbsOrd()
+	//{
+	//	outGif := &gif.GIF{}
+	//	for _, name := range files {
+	//		f, _ := os.Open(name)
+	//		inGif, _ := png.Decode(f)
+	//		bounds := inGif.Bounds()
+	//		palettedImage := image.NewPaletted(bounds, nil)
+	//		quantizer := gogif.MedianCutQuantizer{NumColor: 64}
+	//		quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
+	//		f.Close()
+	//
+	//		outGif.Image = append(outGif.Image, palettedImage)
+	//		outGif.Delay = append(outGif.Delay, 1)
+	//	}
+	//	// save to out.gif
+	//	f, _ := os.OpenFile("out1.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	//	defer f.Close()
+	//	gif.EncodeAll(f, outGif)
+	//}
+	//
+	//files = make([]string, 0)
+	//drawDiagonal()
+	//{
+	//	outGif := &gif.GIF{}
+	//	for _, name := range files {
+	//		f, _ := os.Open(name)
+	//		inGif, _ := png.Decode(f)
+	//		bounds := inGif.Bounds()
+	//		palettedImage := image.NewPaletted(bounds, nil)
+	//		quantizer := gogif.MedianCutQuantizer{NumColor: 64}
+	//		quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
+	//		f.Close()
+	//
+	//		outGif.Image = append(outGif.Image, palettedImage)
+	//		outGif.Delay = append(outGif.Delay, 1)
+	//	}
+	//	// save to out.gif
+	//	f, _ := os.OpenFile("out2.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	//	defer f.Close()
+	//	gif.EncodeAll(f, outGif)
+	//}
+
+	files = make([]string, 36)
+	drawElipse()
+	{
+		outGif := &gif.GIF{}
+		for _, name := range files {
+			f, _ := os.Open(name)
+			inGif, _ := png.Decode(f)
+			bounds := inGif.Bounds()
+			palettedImage := image.NewPaletted(bounds, nil)
+			quantizer := gogif.MedianCutQuantizer{NumColor: 64}
+			quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
+			f.Close()
+
+			outGif.Image = append(outGif.Image, palettedImage)
+			outGif.Delay = append(outGif.Delay, 1)
+		}
+		// save to out.gif
+		f, _ := os.OpenFile("out3.gif", os.O_WRONLY|os.O_CREATE, 0600)
+		defer f.Close()
+		gif.EncodeAll(f, outGif)
+	}
 }
 
 var w, h int = 2543, 1344
@@ -40,15 +113,15 @@ func drawDiagonal() {
 	invisible := Color{float64(rand.Intn(255)),
 		float64(rand.Intn(255)),
 		float64(rand.Intn(255))}
-	s := float64(rand.Intn(4))
-	var x, y float64 = float64(w / 10), float64(h / 10)
-	for i := 0; i < 10; i++ {
+	var x, y float64 = float64(w / 10), float64(h)
+	for i := 40; i > 0; i-- {
 		dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
 		dc.SetRGB(0, 0, 0)
 		dc.Fill()
-		drawPrism(dc, x, y, s, visible, invisible)
-		x += float64(w / 10)
-		y += float64(h / 10)
+		drawPrism(dc, x, y, 0.1*float64(i), visible, invisible)
+		x += float64(w / 40)
+		y -= float64(h / 40)
+		files = append(files, fmt.Sprintf("5image%v.png", i))
 		dc.SavePNG(fmt.Sprintf("5image%v.png", i))
 	}
 }
@@ -62,24 +135,25 @@ func drawAbsOrd() {
 	invisible := Color{float64(rand.Intn(255)),
 		float64(rand.Intn(255)),
 		float64(rand.Intn(255))}
-	s := float64(rand.Intn(4))
-	var x float64 = float64(w / 10)
-	for i := 0; i < 9; i++ {
+	var x float64 = float64(w / 50)
+	for i := 40; i > 0; i-- {
 		dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
 		dc.SetRGB(0, 0, 0)
 		dc.Fill()
-		drawPrism(dc, x, 500, s, visible, invisible)
-		x += float64(w / 10)
-		dc.SavePNG(fmt.Sprintf("4image%v.png", i))
+		drawPrism(dc, x, 500, 2, visible, invisible)
+		x += float64(w / 50)
+		files = append(files, fmt.Sprintf("4image%v.gif", i))
+		dc.SavePNG(fmt.Sprintf("4image%v.gif", i))
 	}
-	var y float64 = float64(h / 10)
-	for i := 9; i < 19; i++ {
+	var y float64 = 500
+	for i := 0; i < 40; i++ {
 		dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
 		dc.SetRGB(0, 0, 0)
 		dc.Fill()
-		drawPrism(dc, x, y, s, visible, invisible)
-		y += float64(h / 10)
-		dc.SavePNG(fmt.Sprintf("4image%v.png", i))
+		drawPrism(dc, x, y, 2, visible, invisible)
+		y += float64(h / 50)
+		files = append(files, fmt.Sprintf("4image%v.gif", 40+i))
+		dc.SavePNG(fmt.Sprintf("4image%v.gif", 40+i))
 	}
 }
 
@@ -152,4 +226,43 @@ type origin struct {
 
 type Color struct {
 	r, g, b float64
+}
+
+func drawElipse() {
+	ch := make(chan int)
+
+	var a, b float64 = 320, 160
+	var dx, dy float64 = 390, 320
+	scale := 1.0
+	//for i := 0; i < 3; i++ {
+	for d := 0; d < 360; d += 10 {
+		go func(s float64, deg int) {
+			dc := gg.NewContext(w+100, h+100)
+			print(deg)
+			rad := toRad(deg)
+			x := a*math.Sin(rad) + dx
+			y := b*math.Cos(rad) + dy
+			dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
+			dc.SetRGB(0, 0, 0)
+			dc.Fill()
+			drawPrism(dc, x, y, s, Color{226, 106, 106}, Color{100, 100, 100})
+			dc.SavePNG(fmt.Sprintf("6image%v.png", deg))
+			ch <- deg
+		}(scale, d)
+
+		if 0 < d && d < 90 || 180 < d && d < 270 {
+			scale -= 0.15
+		} else {
+			scale += 0.15
+		}
+	}
+	for i := 0; i < 36; i++ {
+		d := <-ch
+		files[d/10] = fmt.Sprintf("6image%v.png", d)
+	}
+	//}
+}
+
+func toRad(deg int) float64 {
+	return float64(deg) * (math.Pi / 180.0)
 }
