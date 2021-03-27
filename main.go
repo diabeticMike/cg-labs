@@ -24,52 +24,52 @@ var files []string
 
 func main() {
 	// draw()
-	//drawDiagonal()
-	//files = make([]string, 0)
-	//drawAbsOrd()
-	//{
-	//	outGif := &gif.GIF{}
-	//	for _, name := range files {
-	//		f, _ := os.Open(name)
-	//		inGif, _ := png.Decode(f)
-	//		bounds := inGif.Bounds()
-	//		palettedImage := image.NewPaletted(bounds, nil)
-	//		quantizer := gogif.MedianCutQuantizer{NumColor: 64}
-	//		quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
-	//		f.Close()
+	// drawDiagonal()
+	// files = make([]string, 0)
+	// drawAbsOrd()
+	// {
+	// 	outGif := &gif.GIF{}
+	// 	for _, name := range files {
+	// 		f, _ := os.Open(name)
+	// 		inGif, _ := png.Decode(f)
+	// 		bounds := inGif.Bounds()
+	// 		palettedImage := image.NewPaletted(bounds, nil)
+	// 		quantizer := gogif.MedianCutQuantizer{NumColor: 64}
+	// 		quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
+	// 		f.Close()
+	
+	// 		outGif.Image = append(outGif.Image, palettedImage)
+	// 		outGif.Delay = append(outGif.Delay, 1)
+	// 	}
+	// 	// save to out.gif
+	// 	f, _ := os.OpenFile("out1.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	// 	defer f.Close()
+	// 	gif.EncodeAll(f, outGif)
+	// }
 	//
-	//		outGif.Image = append(outGif.Image, palettedImage)
-	//		outGif.Delay = append(outGif.Delay, 1)
-	//	}
-	//	// save to out.gif
-	//	f, _ := os.OpenFile("out1.gif", os.O_WRONLY|os.O_CREATE, 0600)
-	//	defer f.Close()
-	//	gif.EncodeAll(f, outGif)
-	//}
-	//
-	//files = make([]string, 0)
-	//drawDiagonal()
-	//{
-	//	outGif := &gif.GIF{}
-	//	for _, name := range files {
-	//		f, _ := os.Open(name)
-	//		inGif, _ := png.Decode(f)
-	//		bounds := inGif.Bounds()
-	//		palettedImage := image.NewPaletted(bounds, nil)
-	//		quantizer := gogif.MedianCutQuantizer{NumColor: 64}
-	//		quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
-	//		f.Close()
-	//
-	//		outGif.Image = append(outGif.Image, palettedImage)
-	//		outGif.Delay = append(outGif.Delay, 1)
-	//	}
-	//	// save to out.gif
-	//	f, _ := os.OpenFile("out2.gif", os.O_WRONLY|os.O_CREATE, 0600)
-	//	defer f.Close()
-	//	gif.EncodeAll(f, outGif)
-	//}
+	// files = make([]string, 0)
+	// drawDiagonal()
+	// {
+	// 	outGif := &gif.GIF{}
+	// 	for _, name := range files {
+	// 		f, _ := os.Open(name)
+	// 		inGif, _ := png.Decode(f)
+	// 		bounds := inGif.Bounds()
+	// 		palettedImage := image.NewPaletted(bounds, nil)
+	// 		quantizer := gogif.MedianCutQuantizer{NumColor: 64}
+	// 		quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
+	// 		f.Close()
+	
+	// 		outGif.Image = append(outGif.Image, palettedImage)
+	// 		outGif.Delay = append(outGif.Delay, 1)
+	// 	}
+	// 	// save to out.gif
+	// 	f, _ := os.OpenFile("out2.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	// 	defer f.Close()
+	// 	gif.EncodeAll(f, outGif)
+	// }
 
-	files = make([]string, 36)
+	files = make([]string, 18)
 	drawElipse()
 	{
 		outGif := &gif.GIF{}
@@ -136,7 +136,7 @@ func drawAbsOrd() {
 		float64(rand.Intn(255)),
 		float64(rand.Intn(255))}
 	var x float64 = float64(w / 50)
-	for i := 40; i > 0; i-- {
+	for i := 20; i > 0; i-- {
 		dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
 		dc.SetRGB(0, 0, 0)
 		dc.Fill()
@@ -146,7 +146,7 @@ func drawAbsOrd() {
 		dc.SavePNG(fmt.Sprintf("4image%v.gif", i))
 	}
 	var y float64 = 500
-	for i := 0; i < 40; i++ {
+	for i := 0; i < 20; i++ {
 		dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
 		dc.SetRGB(0, 0, 0)
 		dc.Fill()
@@ -232,13 +232,13 @@ func drawElipse() {
 	ch := make(chan int)
 
 	var a, b float64 = 320, 160
-	var dx, dy float64 = 390, 320
-	scale := 1.0
+	var dx, dy float64 = float64(w/2), float64(h/2)
+	scale := 2.0
 	//for i := 0; i < 3; i++ {
-	for d := 0; d < 360; d += 10 {
+	for d := 0; d < 360; d += 20 {
 		go func(s float64, deg int) {
 			dc := gg.NewContext(w+100, h+100)
-			print(deg)
+			println(deg)
 			rad := toRad(deg)
 			x := a*math.Sin(rad) + dx
 			y := b*math.Cos(rad) + dy
@@ -250,15 +250,15 @@ func drawElipse() {
 			ch <- deg
 		}(scale, d)
 
-		if 0 < d && d < 90 || 180 < d && d < 270 {
+		if 0 < d && d < 180 {
 			scale -= 0.15
 		} else {
 			scale += 0.15
 		}
 	}
-	for i := 0; i < 36; i++ {
+	for i := 0; i < 18; i++ {
 		d := <-ch
-		files[d/10] = fmt.Sprintf("6image%v.png", d)
+		files[d/20] = fmt.Sprintf("6image%v.png", d)
 	}
 	//}
 }
