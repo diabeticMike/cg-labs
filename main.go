@@ -2,94 +2,140 @@ package main
 
 import (
 	"fmt"
-	"image"
-	"image/gif"
-	"image/png"
 	"math"
 	"math/rand"
-	"os"
 	"time"
-
-	"github.com/andybons/gogif"
 
 	"github.com/fogleman/gg"
 )
 
 const (
-	scale    = 3
+	scale    = 30
 	filename = "image.png"
 )
 
 var files []string
 
+func line(x1, y1, x2, y2, c float64) {
+	// if x1 > x2 {
+	// 	tmp := x1
+	// 	x1 = x2
+	// 	x2 = tmp
+	// 	tmp = y1
+	// 	y1 = y2
+	// 	y2 = tmp
+	// }
+	// dy := 1
+	// if y1 > y2 {
+	// 	dy = -1
+	// }
+	// m := math.Abs(y2 - y1)
+	// n := x2 - x1
+	// S := m - n
+	// l := n
+	// if m > n {
+	// 	l = m
+	// }
+	// m += m
+	// n += n
+}
+
 func main() {
-	// draw()
-	// drawDiagonal()
-	// files = make([]string, 0)
-	// drawAbsOrd()
-	// {
-	// 	outGif := &gif.GIF{}
-	// 	for _, name := range files {
-	// 		f, _ := os.Open(name)
-	// 		inGif, _ := png.Decode(f)
-	// 		bounds := inGif.Bounds()
-	// 		palettedImage := image.NewPaletted(bounds, nil)
-	// 		quantizer := gogif.MedianCutQuantizer{NumColor: 64}
-	// 		quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
-	// 		f.Close()
-	
-	// 		outGif.Image = append(outGif.Image, palettedImage)
-	// 		outGif.Delay = append(outGif.Delay, 1)
-	// 	}
-	// 	// save to out.gif
-	// 	f, _ := os.OpenFile("out1.gif", os.O_WRONLY|os.O_CREATE, 0600)
-	// 	defer f.Close()
-	// 	gif.EncodeAll(f, outGif)
-	// }
-	//
-	// files = make([]string, 0)
-	// drawDiagonal()
-	// {
-	// 	outGif := &gif.GIF{}
-	// 	for _, name := range files {
-	// 		f, _ := os.Open(name)
-	// 		inGif, _ := png.Decode(f)
-	// 		bounds := inGif.Bounds()
-	// 		palettedImage := image.NewPaletted(bounds, nil)
-	// 		quantizer := gogif.MedianCutQuantizer{NumColor: 64}
-	// 		quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
-	// 		f.Close()
-	
-	// 		outGif.Image = append(outGif.Image, palettedImage)
-	// 		outGif.Delay = append(outGif.Delay, 1)
-	// 	}
-	// 	// save to out.gif
-	// 	f, _ := os.OpenFile("out2.gif", os.O_WRONLY|os.O_CREATE, 0600)
-	// 	defer f.Close()
-	// 	gif.EncodeAll(f, outGif)
-	// }
+	drawParab()
+	drawHiperb()
+	ax3(5)
+	autoRectangle(500, 500, 100, 200)
+}
 
-	files = make([]string, 18)
-	drawElipse()
-	{
-		outGif := &gif.GIF{}
-		for _, name := range files {
-			f, _ := os.Open(name)
-			inGif, _ := png.Decode(f)
-			bounds := inGif.Bounds()
-			palettedImage := image.NewPaletted(bounds, nil)
-			quantizer := gogif.MedianCutQuantizer{NumColor: 64}
-			quantizer.Quantize(palettedImage, bounds, inGif, image.ZP)
-			f.Close()
-
-			outGif.Image = append(outGif.Image, palettedImage)
-			outGif.Delay = append(outGif.Delay, 1)
-		}
-		// save to out.gif
-		f, _ := os.OpenFile("out3.gif", os.O_WRONLY|os.O_CREATE, 0600)
-		defer f.Close()
-		gif.EncodeAll(f, outGif)
+func drawParab() {
+	c := 11
+	x := make([]float64, 0, c)
+	y := make([]float64, 0, c)
+	for i := -5.0; i < float64(c)/2; i++ {
+		x = append(x, i)
+		y = append(y, i*i)
 	}
+
+	dc := gg.NewContext(w+100, h+100)
+	dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
+	dc.SetRGB(0, 0, 0)
+	dc.Fill()
+
+	dc.SetRGB(226, 106, 106)
+	dc.SetLineWidth(3)
+	for i := 0; i < c-1; i++ {
+		dc.DrawLine(x[i]*scale+float64(w/2), float64(h/2)-y[i]*scale, x[i+1]*scale+float64(w/2), float64(h/2)-y[i+1]*scale)
+		dc.Stroke()
+	}
+	dc.SavePNG("parab.png")
+}
+
+func drawHiperb() {
+	c := 11
+	x := make([]float64, 0, c)
+	y := make([]float64, 0, c)
+	for i := 1.0; i < float64(c)+1; i++ {
+		x = append(x, i)
+		y = append(y, 1/i)
+	}
+
+	dc := gg.NewContext(w+100, h+100)
+	dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
+	dc.SetRGB(0, 0, 0)
+	dc.Fill()
+
+	dc.SetRGB(226, 106, 106)
+	dc.SetLineWidth(3)
+	for i := 0; i < c-1; i++ {
+		dc.DrawLine(float64(w/2)+x[i]*scale*2, float64(h/2)+y[i]*scale*2, float64(w/2)+x[i+1]*scale*2, float64(h/2)+y[i+1]*scale*2)
+		dc.Stroke()
+	}
+	dc.SavePNG("hiperb.png")
+}
+
+func ax3(a float64) {
+	c := 11
+	x := make([]float64, 0, c)
+	y := make([]float64, 0, c)
+	for i := 1.0; i < float64(c)+1; i++ {
+		x = append(x, i)
+		y = append(y, a*i*3)
+		fmt.Println(i, a*3*i)
+	}
+
+	dc := gg.NewContext(w+100, h+100)
+	dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
+	dc.SetRGB(0, 0, 0)
+	dc.Fill()
+
+	dc.SetRGB(226, 106, 106)
+	dc.SetLineWidth(3)
+	for i := 0; i < c-1; i++ {
+		dc.DrawLine(float64(w/2)+x[i]*5, float64(h/2)+y[i]*5, float64(w/2)+x[i+1]*5, float64(h/2)+y[i+1]*5)
+		dc.Stroke()
+	}
+	dc.SavePNG("ax3.png")
+}
+
+func autoRectangle(x1, y1, a, b float64) {
+	x2, y2 := x1+a, y1
+	x3, y3 := x1, y1+b
+	x4, y4 := x1+a, y1+b
+
+	dc := gg.NewContext(w+100, h+100)
+	dc.DrawRectangle(0, 0, float64(w+100), float64(h+100))
+	dc.SetRGB(0, 0, 0)
+	dc.Fill()
+
+	dc.SetRGB(226, 106, 106)
+	dc.SetLineWidth(3)
+	dc.DrawLine(x1, y1, x2, y2)
+	dc.DrawLine(x1, y1, x3, y3)
+	dc.DrawLine(x4, y4, x2, y2)
+	dc.DrawLine(x4, y4, x3, y3)
+	dc.Stroke()
+
+	dc.SavePNG("rect.png")
 }
 
 var w, h int = 2543, 1344
@@ -232,7 +278,7 @@ func drawElipse() {
 	ch := make(chan int)
 
 	var a, b float64 = 320, 160
-	var dx, dy float64 = float64(w/2), float64(h/2)
+	var dx, dy float64 = float64(w / 2), float64(h / 2)
 	scale := 2.0
 	//for i := 0; i < 3; i++ {
 	for d := 0; d < 360; d += 20 {
